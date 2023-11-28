@@ -21,7 +21,7 @@ resize=1
 p=False
 k=0
 allowgrab=True
- 
+score=0
 #OBJ creation for different class
 power = 0.0
 distance_hand_from_s = 0.0
@@ -268,7 +268,7 @@ with mp_hands.Hands(min_detection_confidence=0.8,min_tracking_confidence = 0.5) 
             cv2.putText(image,f'distance{distance}',(40,60),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
             cv2.putText(image,f'power/{int(power)}',(40,80),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
             cv2.putText(image,f'disth_from_s/{int(distance_hand_from_s)}',(40,100),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
-            cv2.putText(image,f'dist_throw/{int(distance_throw)}',(40,120),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
+            cv2.putText(image,f'index/{index_finger_coord}',(40,120),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
             
         '''if k==1 and resize>=0.02:
             if pointer_dart ==3:
@@ -284,8 +284,10 @@ with mp_hands.Hands(min_detection_confidence=0.8,min_tracking_confidence = 0.5) 
             image,DART_HIT,allowgrab,pointer_dart,k = dart.resizing(pointer_dart,
                                                                     image,DART_HIT)
         image = scoreboard.display_scoreboard(image,DART_HIT)
+        image,score = dart.dart_hit(image)
         if RM and DART_HIT:
-            scoreboard.up_score()
+            scoreboard.score=scoreboard.score+score
+            score=0
             dart.dart_removed(image)
             CAPTURED=False
             DART_HIT=False
@@ -298,7 +300,8 @@ with mp_hands.Hands(min_detection_confidence=0.8,min_tracking_confidence = 0.5) 
         if p:
             image,pointer_dart_falling,DART_FALLING,p = dart.dart_falling(image,pointer_dart_falling,DART_FALLING,p)
         
-        image = dart.dart_hit(image)
+        
+        
         cv2.imshow('AIRD' , image)
         if (cv2.waitKey(1) & 0xFF == 27):
             break
@@ -307,5 +310,4 @@ cap.release()
 cv2.destroyAllWindows()
 
 #change
-
-    
+ 

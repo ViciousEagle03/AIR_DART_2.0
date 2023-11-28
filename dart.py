@@ -2,12 +2,14 @@ import math
 import cv2
 import numpy as np
 import cvzone
+from Score_board import Scoreboard
 from constants import MY_RESOLUTION__X, MY_RESOLUTION__Y, DART_SIZE,DART_SIZE2,DART_SIZE1,CAM_RES,NUMBER_OF_DARTS,WIND_SIZE,DART_BOARD_SIZE
 class Dart:
 
     
     def __init__(self) -> None:
         self.number_of_darts=[0,1,2]
+        self.scoreboard = Scoreboard()
         darthit0 = cv2.imread("mediapipetest/struck_dart-removebg-preview .png",cv2.IMREAD_UNCHANGED)
         self.darthit = cv2.resize(darthit0,DART_SIZE2)
         self.dartboard0 = cv2.imread("mediapipetest/imagedartboard-removebg-preview.png",cv2.IMREAD_UNCHANGED)
@@ -412,17 +414,19 @@ class Dart:
         image = cvzone.overlayPNG(image,self.dartboard0,((CAM_RES[0]//2 - DART_BOARD_SIZE[0]//2),(CAM_RES[1]//2 - DART_BOARD_SIZE[1]//2)))
         return image
     def dart_hit(self,image):
+        score = self.scoreboard.score
         for number in self.number_of_darts:
             if self.darthit_number[number] == 0:
                 print(f"number............{number}")
-                image = cvzone.overlayPNG(image,self.darthit,((self.darthit_pos[number][0] - DART_SIZE2[0]//2),(self.darthit_pos[number][1] - DART_SIZE2[1]//2)))
-    
-        return image
+                
+                if self.scoreboard.in_dart_board(self.darthit_pos[number]):
+                    image = cvzone.overlayPNG(image,self.darthit,((self.darthit_pos[number][0] - DART_SIZE2[0]//2),(self.darthit_pos[number][1] - DART_SIZE2[1]//2)))
+                    score = self.scoreboard.score
+        return (image,score)
     
     def set_bg(self,image):
         bg_image = cv2.imread("mediapipetest/bg_dart.png",cv2.IMREAD_UNCHANGED)
         bg_image1 = cv2.resize(bg_image,DART_SIZE)
         image = cvzone.overlayPNG(image,bg_image,(500,500))
         return image
-    
     
