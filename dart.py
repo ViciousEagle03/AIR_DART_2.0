@@ -8,13 +8,13 @@ class Dart:
 
     
     def __init__(self) -> None:
-        self.number_of_darts=[0,1,2]
+        self.number_of_darts=[0,1,2,3,4]
         self.scoreboard = Scoreboard()
         darthit0 = cv2.imread("mediapipetest/struck_dart-removebg-preview .png",cv2.IMREAD_UNCHANGED)
         self.darthit = cv2.resize(darthit0,DART_SIZE2)
         self.dartboard0 = cv2.imread("mediapipetest/imagedartboard-removebg-preview.png",cv2.IMREAD_UNCHANGED)
         self.dartboard_pos = ((CAM_RES[0]//2 + DART_BOARD_SIZE[0]//2),(CAM_RES[1]//2 + DART_BOARD_SIZE[1]//2))
-        self.darthit_number = [1,1,1]
+        self.darthit_number = [1,1,1,1,1]
         self.CAPTURED = False
         self.number = []
         self.allowgrab=True
@@ -35,11 +35,13 @@ class Dart:
         #            (int(MY_RESOLUTION__X * 0.20), int(MY_RESOLUTION__Y * 0.05))]
         self.positions = [(int(MY_RESOLUTION__X * 0.05), int(MY_RESOLUTION__Y * 0.05)),
                           (int(MY_RESOLUTION__X * 0.15), int(MY_RESOLUTION__Y * 0.05)),
-                          (int(MY_RESOLUTION__X * 0.20), int(MY_RESOLUTION__Y * 0.05))]
+                          (int(MY_RESOLUTION__X * 0.20), int(MY_RESOLUTION__Y * 0.05)),
+                          (int(MY_RESOLUTION__X * 0.25), int(MY_RESOLUTION__Y * 0.05)),
+                          (int(MY_RESOLUTION__X * 0.30), int(MY_RESOLUTION__Y * 0.05))]
         #for pos in positions:
              #self.darts.append(self.dart_create(self.image, pos))
         #self.darts.append(self.dart_create(positions))
-        self.darthit_pos =[(0,0),(0,0),(0,0)]
+        self.darthit_pos =[(0,0),(0,0),(0,0),(0,0),(0,0)]
 
     def dart_display(self,image):
         self.count=-1
@@ -414,14 +416,13 @@ class Dart:
         image = cvzone.overlayPNG(image,self.dartboard0,((CAM_RES[0]//2 - DART_BOARD_SIZE[0]//2),(CAM_RES[1]//2 - DART_BOARD_SIZE[1]//2)))
         return image
     def dart_hit(self,image):
-        score = self.scoreboard.score
-        for number in self.number_of_darts:
+        score = 0
+        for number in self.number_of_darts:  
             if self.darthit_number[number] == 0:
                 print(f"number............{number}")
-                
                 if self.scoreboard.in_dart_board(self.darthit_pos[number]):
+                    score = score + self.scoreboard.score
                     image = cvzone.overlayPNG(image,self.darthit,((self.darthit_pos[number][0] - DART_SIZE2[0]//2),(self.darthit_pos[number][1] - DART_SIZE2[1]//2)))
-                    score = self.scoreboard.score
         return (image,score)
     
     def set_bg(self,image):

@@ -268,7 +268,7 @@ with mp_hands.Hands(min_detection_confidence=0.8,min_tracking_confidence = 0.5) 
             cv2.putText(image,f'distance{distance}',(40,60),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
             cv2.putText(image,f'power/{int(power)}',(40,80),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
             cv2.putText(image,f'disth_from_s/{int(distance_hand_from_s)}',(40,100),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
-            cv2.putText(image,f'index/{index_finger_coord}',(40,120),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
+            
             
         '''if k==1 and resize>=0.02:
             if pointer_dart ==3:
@@ -286,7 +286,8 @@ with mp_hands.Hands(min_detection_confidence=0.8,min_tracking_confidence = 0.5) 
         image = scoreboard.display_scoreboard(image,DART_HIT)
         image,score = dart.dart_hit(image)
         if RM and DART_HIT:
-            scoreboard.score=scoreboard.score+score
+            scoreboard.up_score(score)
+            cv2.putText(image,f'score/{scoreboard.score}',(40,120),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
             score=0
             dart.dart_removed(image)
             CAPTURED=False
