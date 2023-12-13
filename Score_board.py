@@ -1,5 +1,4 @@
 import cv2
-import cvzone
 import math
 from constants import MY_RESOLUTION__X,MY_RESOLUTION__Y,DART_BOARD_SIZE,CAM_RES
 class Scoreboard:
@@ -38,6 +37,6 @@ class Scoreboard:
             return (True)
         else:
             return (False)
-        #elif (CAM_RES[0]//2 - DART_BOARD_SIZE[0]//2 )<dart_pos[0]<(CAM_RES[0]//2 - DART_BOARD_SIZE[0]//2) and dart_pos[1]<(CAM_RES[1]//2 - DART_BOARD_SIZE[1]//2) :
+       
         
      

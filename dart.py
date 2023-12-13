@@ -1,26 +1,27 @@
-import math
 import cv2
-import numpy as np
 import cvzone
+import random
 from Score_board import Scoreboard
-from constants import MY_RESOLUTION__X, MY_RESOLUTION__Y, DART_SIZE,DART_SIZE2,DART_SIZE1,CAM_RES,NUMBER_OF_DARTS,WIND_SIZE,DART_BOARD_SIZE
+from constants import MY_RESOLUTION__X, MY_RESOLUTION__Y, DART_SIZE,DART_SIZE2,DART_SIZE1,CAM_RES,NUMBER_OF_DARTS,WIND_SIZE,DART_BOARD_SIZE,WIND_ACTIVATE
 class Dart:
 
     
     def __init__(self) -> None:
-        self.number_of_darts=[0,1,2,3,4]
+        self.number_of_darts=[number for number in range(NUMBER_OF_DARTS)]
         self.scoreboard = Scoreboard()
-        darthit0 = cv2.imread("mediapipetest/struck_dart-removebg-preview .png",cv2.IMREAD_UNCHANGED)
+        darthit0 = cv2.imread("AIR_DART_2.0/Util(Images)/struck_dart.png",cv2.IMREAD_UNCHANGED)
         self.darthit = cv2.resize(darthit0,DART_SIZE2)
-        self.dartboard0 = cv2.imread("mediapipetest/imagedartboard-removebg-preview.png",cv2.IMREAD_UNCHANGED)
+        self.dartboard0 = cv2.imread("AIR_DART_2.0/Util(Images)/imagedartboard.png",cv2.IMREAD_UNCHANGED)
         self.dartboard_pos = ((CAM_RES[0]//2 + DART_BOARD_SIZE[0]//2),(CAM_RES[1]//2 + DART_BOARD_SIZE[1]//2))
-        self.darthit_number = [1,1,1,1,1]
+        self.darthit_number = [1 for number in range(NUMBER_OF_DARTS)]
         self.CAPTURED = False
         self.number = []
         self.allowgrab=True
         self.count=-1
         self.darts = [] 
         self.resize=1 
+        self.positions=[]
+        self.WIND_DIRECTION = random.randint(0,1)
         self.pos_fall=(0,0)
         self.dart_captured_number=-12
         self.distance_throw = 0
@@ -30,18 +31,9 @@ class Dart:
         self.intensity = 3
         self.pointer_wind = 0
         self.wind_pos=((100,200),(100,200),(100,200),(100,200),(100,200),(500,500),(500,500),(500,500),(500,500),(500,500),(500,200),(500,200),(500,200),(500,200),(500,200))
-        #positions = [(int(MY_RESOLUTION__X * 0.1), int(MY_RESOLUTION__Y * 0.05)),
-        #             (int(MY_RESOLUTION__X * 0.15), int(MY_RESOLUTION__Y * 0.05)),
-        #            (int(MY_RESOLUTION__X * 0.20), int(MY_RESOLUTION__Y * 0.05))]
-        self.positions = [(int(MY_RESOLUTION__X * 0.05), int(MY_RESOLUTION__Y * 0.05)),
-                          (int(MY_RESOLUTION__X * 0.15), int(MY_RESOLUTION__Y * 0.05)),
-                          (int(MY_RESOLUTION__X * 0.20), int(MY_RESOLUTION__Y * 0.05)),
-                          (int(MY_RESOLUTION__X * 0.25), int(MY_RESOLUTION__Y * 0.05)),
-                          (int(MY_RESOLUTION__X * 0.30), int(MY_RESOLUTION__Y * 0.05))]
-        #for pos in positions:
-             #self.darts.append(self.dart_create(self.image, pos))
-        #self.darts.append(self.dart_create(positions))
-        self.darthit_pos =[(0,0),(0,0),(0,0),(0,0),(0,0)]
+        for i in range(1,NUMBER_OF_DARTS+1):
+            self.positions.append((int(MY_RESOLUTION__X * 0.05*i), int(MY_RESOLUTION__Y * 0.05)))
+        self.darthit_pos =[(0,0) for number in range(NUMBER_OF_DARTS)]
 
     def dart_display(self,image):
         self.count=-1
@@ -49,7 +41,7 @@ class Dart:
         for pos in self.positions:
             self.count+=1
             self.number.append(self.count)
-            dart_img = cv2.imread("dart_png.png", cv2.IMREAD_UNCHANGED)
+            dart_img = cv2.imread("AIR_DART_2.0/Util(Images)/dart_png.png", cv2.IMREAD_UNCHANGED)
             self.dart_img1 = cv2.resize(dart_img, DART_SIZE)
             if self.CAPTURED and (self.dart_captured_number == self.count):
                 self.dart = image
@@ -60,10 +52,6 @@ class Dart:
         
     
     def check_movement(self,coord):
-        
-        
-        #distance = math.dist((positions[0]*CAM_RES[0] , positions[1]*CAM_RES[1]) 
-        #                        , (coord[0]*CAM_RES[0] ,coord[1]*CAM_RES[1]))
         if not self.CAPTURED and self.allowgrab:
             count=int(-1)
             print(len(self.positions))
@@ -150,7 +138,8 @@ class Dart:
             if pointer_dart == 3:
                 pointer_dart=0
             if  self.positions :
-                self.positions[self.dart_captured_number] = self.wind_blow()
+                if WIND_ACTIVATE:
+                    self.positions[self.dart_captured_number] = self.wind_blow()
                 self.positions[self.dart_captured_number] =self.grav1()
                 image = self.dart_animate(image,pointer_dart,self.positions[self.dart_captured_number])
                 
@@ -172,12 +161,12 @@ class Dart:
         return self.CAPTURED
     
     def dart_falling_animate(self,frame,pointer_dart_fall):
-            dart_fall_01 = cv2.imread("mediapipetest/falling_dart1/Untitled_design__2_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
-            dart_fall_02 = cv2.imread("mediapipetest/falling_dart1/Untitled_design__3_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
-            dart_fall_03 = cv2.imread("mediapipetest/falling_dart1/Untitled_design__4_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
-            dart_fall_04 = cv2.imread("mediapipetest/falling_dart1/Untitled_design__5_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
-            dart_fall_05 = cv2.imread("mediapipetest/falling_dart1/Untitled_design__6_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
-            dart_fall_06 = cv2.imread("mediapipetest/falling_dart1/Untitled_design__7_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
+            dart_fall_01 = cv2.imread("AIR_DART_2.0/Util(Images)/falling_dart1/Untitled_design__2_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
+            dart_fall_02 = cv2.imread("AIR_DART_2.0/Util(Images)/falling_dart1/Untitled_design__3_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
+            dart_fall_03 = cv2.imread("AIR_DART_2.0/Util(Images)/falling_dart1/Untitled_design__4_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
+            dart_fall_04 = cv2.imread("AIR_DART_2.0/Util(Images)/falling_dart1/Untitled_design__5_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
+            dart_fall_05 = cv2.imread("AIR_DART_2.0/Util(Images)/falling_dart1/Untitled_design__6_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
+            dart_fall_06 = cv2.imread("AIR_DART_2.0/Util(Images)/falling_dart1/Untitled_design__7_-removebg-preview.png",cv2.IMREAD_UNCHANGED)
             dart_fall_1 = cv2.resize(dart_fall_01 , DART_SIZE1)
             dart_fall_2 = cv2.resize(dart_fall_02 , DART_SIZE1)
             dart_fall_3 = cv2.resize(dart_fall_03 , DART_SIZE1)
@@ -188,6 +177,7 @@ class Dart:
             falling_dart_list = (dart_fall_1,dart_fall_2,dart_fall_3,dart_fall_4,dart_fall_5,dart_fall_6)
             f_dart = falling_dart_list[pointer_dart_fall]
             image = cvzone.overlayPNG(frame,f_dart,self.pos_fall)
+            print("sdhifshdfshdlfhslfshdlfshflshdlfksdhflskfj")
             return(image,self.pos_fall)
     
     def dart_falling(self,image,pointer_dart_falling,DART_FALLING,p):
@@ -202,78 +192,13 @@ class Dart:
         else:
             p=False
             return (image,pointer_dart_falling,DART_FALLING,p)
-    # The inclusion of gravity in darts    
-    # distance --> speed
-    #
-    def grav(self,distance_throw , power,distancediff ):
-        if distance_throw >260 :
-           pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] +15 )
-           return pos
-        elif distance_throw>200:
-            pass
-        elif distance_throw> 130:
-            pass
-        else:
-            
     
-            pass
     def grav2(self,distance_throw,distancediff,angle_of_throw):
         self.distance_throw = distance_throw
         self.distancediff = distancediff
         self.angle_of_throw = angle_of_throw
         
-    '''def grav1(self):
-        if self.distancediff >40 :
-            if self.angle_of_throw>190:
-                if self.anti_grav_pointer>1 :
-                    pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] -15 )
-                    self.anti_grav_pointer-=1
-                    return(pos)
-            if self.angle_of_throw>100:
-                if self.anti_grav_pointer>1 :
-                    pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] -5 )
-                    self.anti_grav_pointer-=1
-                    return(pos)
-            if self.angle_of_throw<50:
-                if self.anti_grav_pointer>1 :
-                    pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] -2 )
-                    self.anti_grav_pointer-=1
-                    return(pos)
-            if self.distance_throw>260:
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] + 10 )
-                return(pos)
-            elif self.distance_throw >150:
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] + 8 )
-                return(pos)
-            elif self.distance_throw >100:
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] + 10 )
-                return(pos)
-        elif self.distancediff>35 :
-            if self.anti_grav_pointer>4 :
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] -3 )
-                self.anti_grav_pointer-=1
-                return(pos)
-            if self.distance_throw>260:
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] + 3 )
-                return(pos)
-            elif self.distance_throw >150:
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] + 4 )
-                return(pos)
-            elif self.distance_throw >100:
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] + 6 )
-                return(pos)
-        elif self.distancediff >25:
-            if self.distance_throw>260:
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] + 3 )
-                return(pos)
-            elif self.distance_throw >150:
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] + 6 )
-                return(pos)
-            elif self.distance_throw >100:
-                pos =(self.positions[self.dart_captured_number][0],self.positions[self.dart_captured_number][1] + 9 )
-                return(pos)
-            '''
-            
+    
             
     def grav1(self):
         if self.distancediff >45 :
@@ -391,14 +316,19 @@ class Dart:
                     return(pos)
 
     def wind_blow(self):
-        pos =(self.positions[self.dart_captured_number][0] -self.intensity ,self.positions[self.dart_captured_number][1] )
-        return pos
+        
+        if self.WIND_DIRECTION == 0:
+            pos =(self.positions[self.dart_captured_number][0] -self.intensity ,self.positions[self.dart_captured_number][1] )
+            return pos
+        if self.WIND_DIRECTION == 1:
+            pos =(self.positions[self.dart_captured_number][0] +self.intensity ,self.positions[self.dart_captured_number][1] )
+            return pos
                            
         
     def wind_animate(self,image):
-        wind01 = cv2.imread("mediapipetest/windblow/windblow1.png",cv2.IMREAD_UNCHANGED)
-        wind02 = cv2.imread("mediapipetest/windblow/windblow2.png",cv2.IMREAD_UNCHANGED)
-        wind03 = cv2.imread("mediapipetest/windblow/windblow3.png",cv2.IMREAD_UNCHANGED)
+        wind01 = cv2.imread("AIR_DART_2.0/Util(Images)/windblow/windblow1.png",cv2.IMREAD_UNCHANGED)
+        wind02 = cv2.imread("AIR_DART_2.0/Util(Images)/windblow/windblow2.png",cv2.IMREAD_UNCHANGED)
+        wind03 = cv2.imread("AIR_DART_2.0/Util(Images)/windblow/windblow3.png",cv2.IMREAD_UNCHANGED)
         wind1 = cv2.resize(wind01 , WIND_SIZE)
         wind2 = cv2.resize(wind02 , WIND_SIZE)
         wind3 = cv2.resize(wind03 , WIND_SIZE)
@@ -426,8 +356,7 @@ class Dart:
         return (image,score)
     
     def set_bg(self,image):
-        bg_image = cv2.imread("mediapipetest/bg_dart.png",cv2.IMREAD_UNCHANGED)
-        bg_image1 = cv2.resize(bg_image,DART_SIZE)
-        image = cvzone.overlayPNG(image,bg_image,(500,500))
-        return image
+        bg_image = cv2.imread("AIR_DART_2.0/Util(Images)/blackbg.png",cv2.IMREAD_UNCHANGED)
+        bg_image1 = cv2.resize(bg_image,CAM_RES)
+        return bg_image1
     
