@@ -33,7 +33,7 @@ class Dart:
         self.wind_pos=((100,200),(100,200),(100,200),(100,200),(100,200),(500,500),(500,500),(500,500),(500,500),(500,500),(500,200),(500,200),(500,200),(500,200),(500,200))
         for i in range(1,NUMBER_OF_DARTS+1):
             self.positions.append((int(MY_RESOLUTION__X * 0.05*i), int(MY_RESOLUTION__Y * 0.05)))
-        self.darthit_pos =[(0,0) for number in range(NUMBER_OF_DARTS)]
+        self.darthit_pos :int =[(0,0) for number in range(NUMBER_OF_DARTS)]
 
     def dart_display(self,image):
         self.count=-1
@@ -104,13 +104,12 @@ class Dart:
                 return(image)
 
     def dart_animate(self,frame,pointer_dart,dart_pos):
-        dart_animate_01 = cv2.imread("dart_animate/Dart_1-rbg.png",cv2.IMREAD_UNCHANGED)
+        dart_animate_01 = cv2.imread("AIR_DART_2.0/Util(Images)/dart_animate/Dart_1-rbg.png",cv2.IMREAD_UNCHANGED)
         dart_animate_1 = cv2.resize(dart_animate_01 , DART_SIZE)
-        dart_animate_02 = cv2.imread("dart_animate/Dart_2-rbg.png",cv2.IMREAD_UNCHANGED)
+        dart_animate_02 = cv2.imread("AIR_DART_2.0/Util(Images)/dart_animate/Dart_2-rbg.png",cv2.IMREAD_UNCHANGED)
         dart_animate_2 = cv2.resize(dart_animate_02 , DART_SIZE)
-        dart_animate_03 = cv2.imread("dart_animate/Dart_3-rbg.png",cv2.IMREAD_UNCHANGED)
+        dart_animate_03 = cv2.imread("AIR_DART_2.0/Util(Images)/dart_animate/Dart_3-rbg.png",cv2.IMREAD_UNCHANGED)
         dart_animate_3 = cv2.resize(dart_animate_03 , DART_SIZE)
-        dart_animate_03 = cv2.imread("dart_animate/Dart_3-rbg.png",cv2.IMREAD_UNCHANGED)
         dart_animate_list = (dart_animate_1,dart_animate_2,dart_animate_3)
             
         self.allowgrab = False
